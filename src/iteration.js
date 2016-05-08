@@ -8,13 +8,13 @@ const shapeSymbol = Object.assign(Symbol('Symbol.shape'), {
 })
 
 function WrappedIterable(iterable) {
-  let shape = iterable[shapeSymbol]
-  let origIterator = iterable[Symbol.iterator]()
-  let next = (fn) => () => {
-    let obj = origIterator.next()
+  const shape = iterable[shapeSymbol]
+  const origIterator = iterable[Symbol.iterator]()
+  const next = (fn) => () => {
+    const obj = origIterator.next()
     return Object.assign(obj, {value: fn(obj.value)})
   }
-  let iterator = {}
+  const iterator = {}
   if (shape === shapeSymbol.indexed) {
     let i = 0
     iterator.next = next((value) => [value, i++])
@@ -30,15 +30,15 @@ const Reconstructor = obj => (obj[reconstructSymbol] || ArrayReconstructor).call
 
 const methods = {
   map(iterable, callback, thisArg = null) {
-    let {result, enter} = Reconstructor(iterable)
-    for (let [value, key] of WrappedIterable(iterable)) {
+    const {result, enter} = Reconstructor(iterable)
+    for (const [value, key] of WrappedIterable(iterable)) {
       enter(callback.call(thisArg, value, key, iterable), key)
     }
     return result
   },
   reduce(iterable, callback, ...initParams) {
     let result
-    for (let [value, ...params] of WrappedIterable(iterable)) {
+    for (const [value, ...params] of WrappedIterable(iterable)) {
       if (initParams) {
         if (initParams.length) {
           result = callback(initParams[0], value, ...params)
@@ -53,8 +53,8 @@ const methods = {
     return result
   },
   filter(iterable, callback, thisArg = null) {
-    let {result, enter} = Reconstructor(iterable)
-    for (let [value, key] of WrappedIterable(iterable)) {
+    const {result, enter} = Reconstructor(iterable)
+    for (const [value, key] of WrappedIterable(iterable)) {
       if (callback.call(thisArg, value, key, iterable)) {
         enter(value, key)
       }

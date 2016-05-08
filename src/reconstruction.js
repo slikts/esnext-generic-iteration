@@ -5,8 +5,8 @@ const reconstructSymbol = Symbol('Symbol.reconstruct')
 const Species = obj => obj.constructor && obj.constructor[Symbol.species]
 
 function ArrayReconstructor() {
-  let species = Species(this)
-  let result = new (Array.isArray(species) ? species : Array)
+  const species = Species(this)
+  const result = new (Array.isArray(species) ? species : Array)
   return {
     enter(v) {
       result.push(v)
@@ -16,8 +16,8 @@ function ArrayReconstructor() {
 }
 
 function MapReconstructor() {
-  let species = Species(this)
-  let result = new (species instanceof Map ? species : Map)
+  const species = Species(this)
+  const result = new (species instanceof Map ? species : Map)
   return {
     enter(v, k) {
       result.set(v, k)
