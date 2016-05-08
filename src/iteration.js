@@ -12,16 +12,16 @@ function WrappedIterable(iterable) {
   let origIterator = iterable[Symbol.iterator]()
   let next = (fn) => () => {
     let obj = origIterator.next()
-    return obj.value ? Object.assign(obj, {value: fn(obj.value)}) : obj
+    return Object.assign(obj, {value: fn(obj.value)})
   }
   let iterator = {}
   if (shape === shapeSymbol.indexed) {
     let i = 0
-    iterator.next = next((value) => [value, i++, iterable])
+    iterator.next = next((value) => [value, i++])
   } else if (shape === shapeSymbol.entries) {
-    iterator.next = next((value) => Object.assign([null, null, iterable], value.slice(0, 2)))
+    iterator.next = next((value) => Object.assign([null, null], [].concat(value).slice(0, 2)))
   } else {
-    iterator.next = next((value) => [value, null, iterable])
+    iterator.next = next((value) => [value, null])
   }
   return {[Symbol.iterator]: () => iterator}
 }
@@ -54,9 +54,9 @@ const methods = {
   },
   filter(iterable, callback, thisArg = null) {
     let {result, enter} = Reconstructor(iterable)
-    for (let [value, ...params] of WrappedIterable(iterable)) {
-      if (callback.call(thisArg, value, ...params)) {
-        enter(value)
+    for (let [value, key] of WrappedIterable(iterable)) {
+      if (callback.call(thisArg, value, key, iterable)) {
+        enter(value, key)
       }
     }
     return result
