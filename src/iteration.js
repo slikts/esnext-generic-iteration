@@ -1,6 +1,10 @@
-const shapeSymbol = Object.assign(Symbol('shape'), {
-  entries: Symbol('entries'),
-  indexed: Symbol('indexed'),
+'use strict'
+
+const {reconstructSymbol, ArrayReconstructor} = require('./reconstruction')
+
+const shapeSymbol = Object.assign(Symbol('Symbol.shape'), {
+  entries: Symbol('Symbol.shape.entries'),
+  indexed: Symbol('Symbol.shape.indexed'),
 })
 
 function WrappedIterable(iterable) {
@@ -8,25 +12,27 @@ function WrappedIterable(iterable) {
   let origIterator = iterable[Symbol.iterator]()
   let next = (fn) => () => {
     let obj = origIterator.next()
-    return Object.assign(obj, {value: fn(obj.value)})
+    return obj.value ? Object.assign(obj, {value: fn(obj.value)}) : obj
   }
   let iterator = {}
   if (shape === shapeSymbol.indexed) {
     let i = 0
     iterator.next = next((value) => [value, i++, iterable])
   } else if (shape === shapeSymbol.entries) {
-    iterator.next = next((value) => [...[].concat(value).slice(2), iterable])
+    iterator.next = next((value) => Object.assign([null, null, iterable], value.slice(0, 2)))
   } else {
     iterator.next = next((value) => [value, null, iterable])
   }
   return {[Symbol.iterator]: () => iterator}
 }
 
+const Reconstructor = obj => (obj[reconstructSymbol] || ArrayReconstructor).call(obj)
+
 const methods = {
   map(iterable, callback, thisArg = null) {
-    let result = []
-    for (let params of WrappedIterable(iterable)) {
-      result.push(callback.call(thisArg, ...params))
+    let {result, enter} = Reconstructor(iterable)
+    for (let [value, key] of WrappedIterable(iterable)) {
+      enter(callback.call(thisArg, value, key, iterable), key)
     }
     return result
   },
@@ -47,14 +53,18 @@ const methods = {
     return result
   },
   filter(iterable, callback, thisArg = null) {
-    let result = []
+    let {result, enter} = Reconstructor(iterable)
     for (let [value, ...params] of WrappedIterable(iterable)) {
       if (callback.call(thisArg, value, ...params)) {
-        result.push(value)
+        enter(value)
       }
     }
     return result
   },
 }
 
-module.exports = {methods, shapeSymbol, WrappedIterable}
+module.exports = {
+  methods,
+  shapeSymbol,
+  WrappedIterable,
+}

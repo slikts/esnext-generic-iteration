@@ -4,7 +4,7 @@
   "description": "Generic iteration methods",
   "main": "src/index.js",
   "scripts": {
-    "test": "nodemon -x mocha -c"
+    "test": "mocha -c -w"
   },
   "repository": {
     "type": "git",
