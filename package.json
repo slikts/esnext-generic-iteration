@@ -1,0 +1,26 @@
+{
+  "name": "esnext-generic-iteration",
+  "version": "1.0.0",
+  "description": "Generic iteration methods",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "nodemon -x mocha -c"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/slikts/esnext-generic-iteration.git"
+  },
+  "keywords": [
+    "esnext",
+    "iterators"
+  ],
+  "author": "slikts",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/slikts/esnext-generic-iteration/issues"
+  },
+  "homepage": "https://github.com/slikts/esnext-generic-iteration#readme",
+  "devDependencies": {
+    "chai": "^3.5.0"
+  }
+}
