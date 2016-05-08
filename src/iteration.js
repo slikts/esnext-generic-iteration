@@ -19,7 +19,7 @@ function WrappedIterable(iterable) {
     let i = 0
     iterator.next = next((value) => [value, i++])
   } else if (shape === shapeSymbol.entries) {
-    iterator.next = next((value) => Object.assign([null, null], [].concat(value).slice(0, 2)))
+    iterator.next = next((value = []) => value.slice(0, 2))
   } else {
     iterator.next = next((value) => [value, null])
   }
