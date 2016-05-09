@@ -1,6 +1,8 @@
 # Better iteration methods for ES.next
 
-The `Array` [iteration methods][1] added in ES5 offer [advantages][4] over looping constructs in readability and describing intent, but there are certain common pitfalls involved with using the `Array` iteration methods with objects supporting the [iteration protocol][2] (see [Terms][/#terms] for disambiguation) added in ES2015:
+## Rationale
+
+The `Array` [iteration methods][1] added in ES5 offer [advantages][4] over looping constructs in readability and describing intent, but there are certain common pitfalls involved with using the `Array` iteration methods with objects supporting the [iteration protocol][2] added in ES2015:
 
  * The iterable objects need to be transformed to `Array` objects for the `Array` iteration methods to work (`Function#call()` on the iteration methods with non-`Array`-like contexts doesn't work)
  * Restoring the previous type of the objects after iterating requires an additional transformation
@@ -50,16 +52,40 @@ for (let i of count()) if (i > 5) break
 Array.from(count())
 ```
 
+Defining the iterator return value shape for iterables (the `Map` and `Array` constructors in this case):
+```javascript
+Map.prototype[Symbol.shape] = Symbol.shape.entries
+Array.prototype[Symbol.shape] = Symbol.shape.indexed
+```
+
+Defining shorthands for the iteration methods (assuming they would be on the `Object` constructor by default):
+```javascript
+const {map, reduce, filter} = Object
+```
+
 ## Example implementation
 
+Currently implements the following methods from `Array.prototype`:
 
+ * `map()`
+ * `filter()`
+ * `reduce()`
+ * `every()`
+ * `some()`
+ * `forEach()`
+
+The full implementation would include all `Array` iteration methods.
+
+The test suite can be run using `npm run test`
+
+[polyfill.js](/src/polyfill.js) adds the iteration methods and other properties to the builtin objects.
 
 ## Terms
 
- * *iterable* -- an object that implements the iterable protocol by having a method that returns an iterator
- * *iterator* -- an object that implements the iterator protocol by having a method that returns an object with the next value in the iterable and the state of the iterator
- * *`Array` iteration methods* -- `Array.prototype` methods for traversing its elements
- * *iteration protocol* -- see [Iteration protocols][2]
+ * *iterable* – an object that implements the iterable protocol by having a method that returns an iterator
+ * *iterator* – an object that implements the iterator protocol by having a method that returns an object with the next value in the iterable and the state of the iterator
+ * *`Array` iteration methods* – `Array.prototype` methods for traversing its elements
+ * *iteration protocol* – see [Iteration protocols][2]
 
 [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array#Iteration_methods
 [2]: https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Iteration_protocols
