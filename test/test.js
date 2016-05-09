@@ -78,6 +78,12 @@ describe('methods', () => {
       every([1,null,3], (x) => { i++; return x })
       assert.equal(i, 2)
     })
+    it('break out of endless', () => {
+      let endless = {[Symbol.iterator]() { return function*(i = 0) { for(;;) yield i++ }() }}
+      let i = 0
+      every(endless, x => { i = x; return x < 5 })
+      assert.equal(i, 5)
+    })
   })
   describe('some()', () => {
     it('should return true for any truthy values', () => {
