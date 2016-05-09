@@ -3,6 +3,12 @@
 const {methods, shapeSymbol} = require('./iteration')
 const {reconstructSymbol, ArrayReconstructor, MapReconstructor} = require('./reconstruction')
 
+/* Define support for generic iterators on native objects.
+
+   The iterator methods are stored as properties of the Object constructor.
+   A typical usage could be such: `const {map, reduce, filter} = Object`
+   */
+
 Symbol.shape = shapeSymbol
 Symbol.reconstruct = reconstructSymbol
 

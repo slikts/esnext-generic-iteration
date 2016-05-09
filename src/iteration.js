@@ -7,20 +7,28 @@ const shapeSymbol = Object.assign(Symbol('Symbol.shape'), {
   indexed: Symbol('Symbol.shape.indexed'),
 })
 
+/* Creates a new object with an @@iterator method that wraps the original
+   and 'normalizes' its return values based on the @@shape property of
+   the original iterable object
+   */
 function WrappedIterable(iterable) {
   const shape = iterable[shapeSymbol]
   const origIterator = iterable[Symbol.iterator]()
   const next = (fn) => () => {
-    const obj = origIterator.next()
-    return Object.assign(obj, {value: fn(obj.value)})
+    const result = origIterator.next()
+    // Apply callback to the value
+    return Object.assign(result, {value: fn(result.value)})
   }
   const iterator = {}
+  // Determine how to construct the return value based on the @@shape property
   if (shape === shapeSymbol.indexed) {
     let i = 0
     iterator.next = next((value) => [value, i++])
   } else if (shape === shapeSymbol.entries) {
+    // Original iterator returns key and value pairs
     iterator.next = next((value = []) => value.slice(0, 2))
   } else {
+    // Default shape, values wihout keys
     iterator.next = next((value) => [value, null])
   }
   return {[Symbol.iterator]: () => iterator}
@@ -28,6 +36,12 @@ function WrappedIterable(iterable) {
 
 const Reconstructor = obj => (obj[reconstructSymbol] || ArrayReconstructor).call(obj)
 
+/* Generic methods for iterating over iterable objects; the method singature
+   matches that of the Array.prototype methods. The return values are
+   of the same type as the input for objects that support the 'reconstructible'
+   protocol (based on the @@reconstruct method), otherwise the return values
+   are Array objects.
+   */
 const methods = {
   map(iterable, callback, thisArg = null) {
     const {result, enter} = Reconstructor(iterable)

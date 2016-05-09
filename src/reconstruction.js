@@ -1,5 +1,11 @@
 'use strict'
 
+/* The reconstructor objects define how an object may be reconstructed;
+   their shape includes an `enter(v[, k])` method and a `result` property.
+   Objects that have a @@reconstruct method that returns a Reconstructor
+   object support the reconstructible protocol.
+   */
+
 const reconstructSymbol = Symbol('Symbol.reconstruct')
 
 const Species = obj => obj.constructor && obj.constructor[Symbol.species]
