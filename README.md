@@ -1,6 +1,6 @@
 # Better iteration methods for ES.next
 
-The `Array` [iteration methods][1] added in ES5 offer [advantages][4] over looping constructs in readability and describing intent, but there are certain common pitfalls involved with using the `Array` iteration methods with objects supporting the [iteration protocol][2] (see [Terms][#terms]) added in ES2015:
+The `Array` [iteration methods][1] added in ES5 offer [advantages][4] over looping constructs in readability and describing intent, but there are certain common pitfalls involved with using the `Array` iteration methods with objects supporting the [iteration protocol][2] (see [Terms][/#terms] for disambiguation) added in ES2015:
 
  * The iterable objects need to be transformed to `Array` objects for the `Array` iteration methods to work (`Function#call()` on the iteration methods with non-`Array`-like contexts doesn't work)
  * Restoring the previous type of the objects after iterating requires an additional transformation
@@ -18,7 +18,7 @@ This document proposes implementing generic iteration methods in the core langua
  * Similar method and callback signatures to the `Array` iteration methods
    + `method(iterable, callback[, thisArg])` with callback parameters `value`, `key`, `iterable`
    + Returning the input type where applicable and defaulting to `Array` otherwise
- * Support for a minimal protocol to describe the shape of the return values of the iterator, and the construction of the result of the iteration method
+ * Support for a minimal protocol to describe the shape of the return values of the iterator and the construction of the result of the iteration method
    + Allow describing the shape of the iterator return values as entries (key-value pairs) or indexed to allow populating the `key` callback parameter with the keys or inferred indices
      - Duplicate the `value` parameter (like with the `Set#forEach()` method) for types with undefined iterator return shapes or where keys/indices are not applicable (like with `Set` objects)
    + Support constructing return values of the same type for builtin types like `Map` or `Set`
@@ -49,6 +49,17 @@ for (let i of count()) if (i > 5) break
  // `Array` transformation hangs, so the `Array` iteration methods can't be used
 Array.from(count())
 ```
+
+## Example implementation
+
+
+
+## Terms
+
+ * *iterable* -- an object that implements the iterable protocol by having a method that returns an iterator
+ * *iterator* -- an object that implements the iterator protocol by having a method that returns an object with the next value in the iterable and the state of the iterator
+ * *`Array` iteration methods* -- `Array.prototype` methods for traversing its elements
+ * *iteration protocol* -- see [Iteration protocols][2]
 
 [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array#Iteration_methods
 [2]: https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Iteration_protocols
