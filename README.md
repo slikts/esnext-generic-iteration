@@ -18,11 +18,11 @@ This document proposes implementing generic iteration methods in the core langua
  * Similar method and callback signatures to the `Array` iteration methods
    + `method(iterable, callback[, thisArg])` with callback parameters `value`, `key`, `iterable`
    + Returning the input type where applicable and defaulting to `Array` otherwise
- * Support for a minimal protocol to describe the shape of the return values of the iterator, and the construction of the return value of the iteration method
+ * Support for a minimal protocol to describe the shape of the return values of the iterator, and the construction of the result of the iteration method
    + Allow describing the shape of the iterator return values as entries (key-value pairs) or indexed to allow populating the `key` callback parameter with the keys or inferred indices
-     - Use an empty `key` parameter for all other types
-   + Properly support builtin types like Map
-   + Use an optional well-known `Symbol` property on the iterable for a method that returns an object that implements the iteration result construction protocol
+     - Duplicate the `value` parameter (like with the `Set#forEach()` method) for types with undefined iterator return shapes or where keys/indices are not applicable (like with `Set` objects)
+   + Support constructing return values of the same type for builtin types like `Map` or `Set`
+   + Use an optional well-known `Symbol` property on the iterable to call a method that returns an object that implements the iteration method result construction protocol
      - Have a property with the constructed result of the iteration method for returning it
      - Have a method that takes the callback return values and populates the constructed result
      - Use the `Array` return value construction behavior by default
@@ -30,7 +30,7 @@ This document proposes implementing generic iteration methods in the core langua
 ## Code examples
 
 Applying a callback to the values of a `Map` object and returning the same object type:
-```
+```javascript
 // Using `Array` iteration methods
 new Map(Array.from(mapObject).map(callback))
 
@@ -39,7 +39,7 @@ map(mapObject, callback)
 ```
 
 Traversing only part of an infinite iterable:
-```
+```javascript
 function* count(i = 0) { for(;;) yield i++ }
 
 // Looping constructs and generic iteration methods both allow breaking
