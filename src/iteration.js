@@ -75,6 +75,27 @@ const methods = {
     }
     return result
   },
+  every(iterable, callback, thisArg = null) {
+    for (const [value, key] of WrappedIterable(iterable)) {
+      if (!callback.call(thisArg, value, key, iterable)) {
+        return false
+      }
+    }
+    return true
+  },
+  some(iterable, callback, thisArg = null) {
+    for (const [value, key] of WrappedIterable(iterable)) {
+      if (callback.call(thisArg, value, key, iterable)) {
+        return true
+      }
+    }
+    return false
+  },
+  forEach(iterable, callback, thisArg = null) {
+    for (const [value, key] of WrappedIterable(iterable)) {
+      callback.call(thisArg, value, key, iterable)
+    }
+  },
 }
 
 module.exports = {

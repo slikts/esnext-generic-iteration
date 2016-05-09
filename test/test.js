@@ -1,4 +1,11 @@
-const {methods: {map, filter, reduce}, WrappedIterable} = require('../src/iteration')
+const {methods: {
+  map,
+  filter,
+  reduce,
+  every,
+  some,
+  forEach,
+}, WrappedIterable} = require('../src/iteration')
 
 require('../src/polyfill')
 
@@ -57,6 +64,34 @@ describe('methods', () => {
     })
     it('should reduce Map object values', () => {
       assert.equal(reduce(new Map([[1,2],[3,4]]), (a, b) => a + b), 4)
+    })
+  })
+  describe('every()', () => {
+    it('should return true for all truthy values', () => {
+      assert.isTrue(every([1,2,3], x => x))
+    })
+    it('should return false for any falsy values', () => {
+      assert.isFalse(every([1,null], x => x))
+    })
+    it('should stop iterating after a falsy value', () => {
+      let i = 0
+      every([1,null,3], (x) => { i++; return x })
+      assert.equal(i, 2)
+    })
+  })
+  describe('some()', () => {
+    it('should return true for any truthy values', () => {
+      assert.isTrue(some([null,1], x => x))
+    })
+    it('should return false no truthy values', () => {
+      assert.isFalse(some([null,null], x => x))
+    })
+  })
+  describe('forEach()', () => {
+    it('should apply side-effects', () => {
+      let q = []
+      forEach([...Array(5)], () => q.push(5))
+      assert.deepEqual([5,5,5,5,5], q)
     })
   })
 })
