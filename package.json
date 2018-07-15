@@ -21,6 +21,6 @@
   },
   "homepage": "https://github.com/slikts/esnext-generic-iteration#readme",
   "devDependencies": {
-    "chai": "^3.5.0"
+    "chai": "^4.1.2"
   }
 }
