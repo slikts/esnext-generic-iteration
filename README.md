@@ -1,5 +1,7 @@
 # Better iteration methods for ES.next
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/slikts/esnext-generic-iteration.svg)](https://greenkeeper.io/)
+
 ## Rationale
 
 The `Array` [iteration methods][1] added in ES5 offer [advantages][4] over looping constructs in readability and describing intent, but there are certain common pitfalls involved with using the `Array` iteration methods with objects supporting the [iteration protocol][2] added in ES2015:
